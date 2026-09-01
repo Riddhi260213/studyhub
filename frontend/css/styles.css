@@ -1,6 +1,5 @@
 /* ============================================================
    StudyHub — Stylesheet with Light & Dark themes
-   Uses CSS custom properties swapped via [data-theme="dark"]
    ============================================================ */
 
 :root {
@@ -10,7 +9,6 @@
   --gray-300:#d1d5db; --gray-400:#9ca3af; --gray-500:#6b7280;
   --gray-600:#4b5563; --gray-700:#374151; --gray-800:#1f2937; --gray-900:#111827;
 
-  /* Light theme (default) */
   --bg:var(--gray-50); --surface:#ffffff; --surface-alt:var(--gray-100);
   --text:var(--gray-800); --text-muted:var(--gray-500);
   --border:var(--gray-200); --border-strong:var(--gray-300);
@@ -27,9 +25,11 @@
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
   --space-5:24px; --space-6:32px; --space-8:48px;
   --sidebar-w:260px; --t-fast:120ms ease; --t-med:220ms ease;
+
+  /* System font stack — sharp, fast, no external requests */
+  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Dark theme */
 [data-theme="dark"] {
   --bg:#0f172a; --surface:#1e293b; --surface-alt:#334155;
   --text:#f1f5f9; --text-muted:#94a3b8;
@@ -44,7 +44,7 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased;transition:background var(--t-med),color var(--t-med)}
+body{font-family:var(--font-stack);background:var(--bg);color:var(--text);line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background var(--t-med),color var(--t-med)}
 a{color:var(--primary);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font-family:inherit;cursor:pointer}
@@ -75,7 +75,7 @@ h1,h2,h3,h4{line-height:1.25;font-weight:700}
 .mini-stat-row{display:flex;justify-content:space-between;padding:var(--space-1) 0}
 .mini-stat-row strong{color:#fff}
 
-.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(2px)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
 .main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
 
 .topbar{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-6);background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;transition:background var(--t-med),border-color var(--t-med)}
@@ -198,7 +198,7 @@ h1,h2,h3,h4{line-height:1.25;font-weight:700}
 .subject-progress-item .sp-name{display:flex;align-items:center;gap:var(--space-2);font-weight:600}
 .subject-progress-item .sp-count{font-size:13px;color:var(--text-muted)}
 
-.modal-backdrop{position:fixed;inset:0;background:rgba(17,24,39,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:var(--space-4);backdrop-filter:blur(3px);animation:fadeIn var(--t-fast)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(17,24,39,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:var(--space-4);animation:fadeIn var(--t-fast)}
 .modal{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-xl);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:slideUp var(--t-med)}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-5);border-bottom:1px solid var(--border)}
