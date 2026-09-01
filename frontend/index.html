@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyHub — a personal study and task-management dashboard for students.">
+  <title>StudyHub — Study & Task Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function() {
+      var saved = localStorage.getItem('studyhub-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-logo" aria-hidden="true">📚</span><span class="brand-name">StudyHub</span></div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard" aria-current="page"><span class="nav-icon" aria-hidden="true">▦</span><span>Dashboard</span></button>
+        <button class="nav-item" data-view="subjects" aria-current="false"><span class="nav-icon" aria-hidden="true">🎒</span><span>Subjects</span></button>
+        <button class="nav-item" data-view="tasks" aria-current="false"><span class="nav-icon" aria-hidden="true">✓</span><span>Tasks</span></button>
+        <button class="nav-item" data-view="progress" aria-current="false"><span class="nav-icon" aria-hidden="true">📈</span><span>Progress</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"><span class="theme-toggle-icon">🌙</span><span class="theme-toggle-label">Dark Mode</span></button>
+        <div class="mini-stats" id="sidebar-stats" aria-live="polite"></div>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <h1 class="view-title" id="view-title">Dashboard</h1>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost icon-btn" id="theme-toggle-top" aria-label="Toggle dark mode" title="Toggle theme"><span id="theme-icon-top">🌙</span></button>
+          <button class="btn btn-primary" id="quick-add-btn"><span aria-hidden="true">+</span> New Task</button>
+        </div>
+      </header>
+      <main id="main" class="content" tabindex="-1">
+        <section class="view view-dashboard active" id="view-dashboard" aria-labelledby="view-title">
+          <div class="stat-grid" id="stat-grid"></div>
+          <div class="dashboard-row">
+            <div class="card col-2"><div class="card-header"><h2 class="card-title">Recent Tasks</h2><button class="btn btn-ghost btn-sm" data-goto="tasks">View all →</button></div><div id="dashboard-recent-tasks" class="card-body"></div></div>
+            <div class="card"><div class="card-header"><h2 class="card-title">Subject Progress</h2><button class="btn btn-ghost btn-sm" data-goto="progress">Details →</button></div><div id="dashboard-subject-progress" class="card-body"></div></div>
+          </div>
+        </section>
+        <section class="view view-subjects" id="view-subjects" aria-labelledby="view-title" hidden>
+          <div class="view-toolbar"><h2 class="section-title">Your Subjects</h2><button class="btn btn-primary" id="add-subject-btn"><span aria-hidden="true">+</span> Add Subject</button></div>
+          <div id="subjects-grid" class="subjects-grid"></div>
+        </section>
+        <section class="view view-tasks" id="view-tasks" aria-labelledby="view-title" hidden>
+          <div class="view-toolbar"><h2 class="section-title">Tasks</h2><button class="btn btn-primary" id="add-task-btn"><span aria-hidden="true">+</span> New Task</button></div>
+          <div class="filter-bar" id="filter-bar">
+            <div class="search-wrap"><span class="search-icon" aria-hidden="true">🔍</span><input type="search" id="task-search" class="input search-input" placeholder="Search tasks…" aria-label="Search tasks by title"></div>
+            <div class="filter-group"><label class="filter-label" for="filter-subject">Subject</label><select id="filter-subject" class="input select"><option value="">All subjects</option></select></div>
+            <div class="filter-group"><label class="filter-label" for="filter-priority">Priority</label><select id="filter-priority" class="input select"><option value="">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
+            <div class="filter-group"><label class="filter-label" for="filter-status">Status</label><select id="filter-status" class="input select"><option value="">All</option><option value="pending">Pending</option><option value="completed">Completed</option></select></div>
+            <div class="filter-group"><label class="filter-label" for="sort-by">Sort by</label><select id="sort-by" class="input select"><option value="due_date">Due date</option><option value="priority">Priority</option><option value="status">Completion status</option><option value="title">Title</option></select></div>
+            <button class="btn btn-ghost btn-sm" id="clear-filters">Clear</button>
+          </div>
+          <div id="tasks-list" class="tasks-list"></div>
+          <p class="result-count" id="result-count" aria-live="polite"></p>
+        </section>
+        <section class="view view-progress" id="view-progress" aria-labelledby="view-title" hidden>
+          <div class="view-toolbar"><h2 class="section-title">Progress Overview</h2></div>
+          <div class="progress-grid">
+            <div class="card"><div class="card-header"><h3 class="card-title">Overall Completion</h3></div><div class="card-body progress-center"><div class="ring-chart" id="overall-ring" role="img" aria-label="Overall completion percentage"></div><p class="ring-caption" id="overall-caption">0 of 0 tasks done</p></div></div>
+            <div class="card"><div class="card-header"><h3 class="card-title">Tasks by Status</h3></div><div class="card-body"><div class="bar-chart" id="status-bars"></div></div></div>
+            <div class="card"><div class="card-header"><h3 class="card-title">Tasks by Priority</h3></div><div class="card-body"><div class="bar-chart" id="priority-bars"></div></div></div>
+          </div>
+          <div class="card"><div class="card-header"><h3 class="card-title">Per-Subject Progress</h3></div><div class="card-body"><div id="subject-progress-list" class="subject-progress-list"></div></div></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+      <div class="modal-header"><h2 class="modal-title" id="modal-title">Modal</h2><button class="modal-close" id="modal-close" aria-label="Close dialog">×</button></div>
+      <form id="modal-form" class="modal-form" novalidate>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer"><button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button><button type="submit" class="btn btn-primary" id="modal-save">Save</button></div>
+        <div class="modal-error" id="modal-error" role="alert" hidden></div>
+      </form>
+    </div>
+  </div>
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/forms.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
